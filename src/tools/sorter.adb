@@ -16,8 +16,8 @@
 
 with Ada.Integer_Text_IO;
 with Ada.Float_Text_IO;
-with Text_IO;
-with Direct_IO;
+with Ada.Text_IO;
+with Ada.Direct_IO;
 with Latin_Utils.Strings_Package; use Latin_Utils.Strings_Package;
 with Latin_Utils.Dictionary_Package; use Latin_Utils.Dictionary_Package;
 procedure Sorter is
@@ -25,7 +25,7 @@ procedure Sorter is
    --  Sort by Stringwise (different cases), numeric, or POS enumeration
 
    use Ada.Integer_Text_IO;
-   use Text_IO;
+   use Ada.Text_IO;
 
    Name_Length : constant := 80;
    Enter_Line : String (1 .. Name_Length) := (others => ' ');
@@ -44,7 +44,7 @@ procedure Sorter is
    --   CURRENT_LENGTH : CURRENT_LINE_LENGTH_TYPE := 0;
    --   TEXT : TEXT_TYPE;
    -- end record;
-   package Line_Io is new Direct_IO (Text_Type);
+   package Line_Io is new Ada.Direct_IO (Text_Type);
    use Line_Io;
    Blank_Text : constant Text_Type := (others => ' ');
 
@@ -53,15 +53,15 @@ procedure Sorter is
    P_Line : Text_Type := Blank_Text;
 
    type Sort_Type is (A, C, G, U, N, F, P, S);
-   package Sort_Type_Io is new Text_IO.Enumeration_IO (Sort_Type);
+   package Sort_Type_Io is new Ada.Text_IO.Enumeration_IO (Sort_Type);
    use Sort_Type_Io;
 
    type Way_Type is (I, D);
-   package Way_Type_Io is new Text_IO.Enumeration_IO (Way_Type);
+   package Way_Type_Io is new Ada.Text_IO.Enumeration_IO (Way_Type);
    use Way_Type_Io;
 
-   Input  : Text_IO.File_Type;
-   Output : Text_IO.File_Type;
+   Input  : Ada.Text_IO.File_Type;
+   Output : Ada.Text_IO.File_Type;
    Work   : Line_Io.File_Type;
 
    M1, M2, M3, M4 : Natural := 1;
@@ -86,7 +86,7 @@ procedure Sorter is
 
    type Appendix_Type is (None, A, B, C, D, E, F, G, H, I, J, K, L, M,
      N, O, P, Q, R, S, T, U, V, W, X, Y, Z);
-   package Appendix_Io is new Text_IO.Enumeration_IO (Appendix_Type);
+   package Appendix_Io is new Ada.Text_IO.Enumeration_IO (Appendix_Type);
 
    type Appendix_Section_Type is    record
       Appendix : Appendix_Type := None;
@@ -143,10 +143,10 @@ procedure Sorter is
       Last := L;
       return;
    exception
-      when Text_IO.End_Error =>
+      when Ada.Text_IO.End_Error =>
          Last := L;
          return;
-      when Text_IO.Data_Error =>
+      when Ada.Text_IO.Data_Error =>
          Last := L;
          return;
       when others =>
@@ -223,10 +223,10 @@ procedure Sorter is
       --PUT ("F");
       return;
    exception
-      when Text_IO.End_Error =>
+      when Ada.Text_IO.End_Error =>
          Last := L;
          return;
-      when Text_IO.Data_Error =>
+      when Ada.Text_IO.Data_Error =>
          Last := L;
          return;
       when others =>
@@ -585,9 +585,9 @@ procedure Sorter is
 
    exception
       when others  =>
-         Text_IO.Put_Line ("exception in SLT    showing LEFT and RIGHT");
-         Text_IO.Put_Line (X & "&");
-         Text_IO.Put_Line (Y & "|");
+         Ada.Text_IO.Put_Line ("exception in SLT    showing LEFT and RIGHT");
+         Ada.Text_IO.Put_Line (X & "&");
+         Ada.Text_IO.Put_Line (Y & "|");
          raise;
 
    end Slt;
@@ -648,9 +648,9 @@ procedure Sorter is
 
    exception
       when others  =>
-         Text_IO.Put_Line ("exception in LT    showing LEFT and RIGHT");
-         Text_IO.Put_Line (X & "|");
-         Text_IO.Put_Line (Y & "|");
+         Ada.Text_IO.Put_Line ("exception in LT    showing LEFT and RIGHT");
+         Ada.Text_IO.Put_Line (X & "|");
+         Ada.Text_IO.Put_Line (Y & "|");
          raise;
 
    end Sort_Equal;
@@ -686,13 +686,13 @@ procedure Sorter is
       return False;
    exception
       when others =>
-         Text_IO.Put_Line ("exception in LT    showing LEFT and RIGHT");
-         Text_IO.Put_Line (Left & "|");
-         Text_IO.Put_Line (Right & "|");
+         Ada.Text_IO.Put_Line ("exception in LT    showing LEFT and RIGHT");
+         Ada.Text_IO.Put_Line (Left & "|");
+         Ada.Text_IO.Put_Line (Right & "|");
          raise;
    end Lt;
 
-   procedure Open_File_For_Input (Input : in out Text_IO.File_Type;
+   procedure Open_File_For_Input (Input : in out Ada.Text_IO.File_Type;
                                   Prompt : String := "File for input => ") is
       Last : Natural := 0;
    begin
@@ -714,7 +714,7 @@ procedure Sorter is
 
    end Open_File_For_Input;
 
-   procedure Create_File_For_Output (Output : in out Text_IO.File_Type;
+   procedure Create_File_For_Output (Output : in out Ada.Text_IO.File_Type;
                                      Prompt : String := "File for output => ")
    is
       Name : String (1 .. 80) := (others => ' ');
@@ -789,7 +789,7 @@ begin
       --   raise;
       when Entry_Finished =>
          null;
-      when Text_IO.Data_Error  | Text_IO.End_Error  =>
+      when Ada.Text_IO.Data_Error  | Ada.Text_IO.End_Error  =>
          null;
    end;
 
@@ -828,7 +828,7 @@ begin
       I, J : Line_Io.Positive_Count;
 
    begin
-      Text_IO.Put_Line ("SIZE OF WORK = " &
+      Ada.Text_IO.Put_Line ("SIZE OF WORK = " &
         Integer'Image (Integer (Size (Work))));
       Main :
       loop
@@ -902,14 +902,14 @@ exception
    when Program_Error  =>
       Put_Line ("SORT terminated on a PROGRAM_ERROR");
       Close (Output);
-   when Text_IO.Data_Error =>     --Terminate on primary start or size = 0
+   when Ada.Text_IO.Data_Error =>     --Terminate on primary start or size = 0
       Put_Line ("SORT terminated on a DATA_ERROR");
       Put_Line (Line_Text);
       Close (Output);
    when Constraint_Error =>       --Terminate on blank line for file name
       Put_Line ("SORT terminated on a CONSTRAINT_ERROR");
       Close (Output);
-   when Text_IO.Device_Error  =>     --Ran out of space to write output file
+   when Ada.Text_IO.Device_Error  =>     --Ran out of space to write output file
       Put_Line ("SORT terminated on a DEVICE_ERROR");
       Delete (Output);
       Create_File_For_Output (Output, "Wherelse to put the output => ");
