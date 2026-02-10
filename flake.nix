@@ -68,6 +68,7 @@
             homepage = "http://mk270.github.io/whitakers-words/";
             license = licenses.free;
             platforms = platforms.unix;
+            mainProgram = "words";
           };
         };
       });
