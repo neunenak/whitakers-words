@@ -42,7 +42,16 @@ bin/words in.txt out.txt  # File to file
 - GPRBuild (Ada project manager)
 - GNAT (Ada compiler, version 4.9+ required for 64-bit)
 
-On Debian/Ubuntu: `apt-get install gprbuild gnat`
+**Using Nix (recommended):**
+```bash
+nix develop    # Enter dev shell with all dependencies
+make           # Build
+```
+
+**On Debian/Ubuntu:**
+```bash
+apt-get install gprbuild gnat
+```
 
 ## Architecture
 
@@ -88,6 +97,14 @@ Generated at build time:
 ## Ada Style Notes
 
 The code uses strict compiler warnings (`-gnatwae -Wall`) and style checking. GPR files define the build with static libraries by default.
+
+## Documentation
+
+See `docs/` for detailed architecture documentation:
+- `docs/architecture.md` - Module structure and control flow
+- `docs/data-formats.md` - Dictionary and inflection file formats
+- `docs/parsing-algorithm.md` - Core Latin parsing algorithm
+- `docs/porting-notes.md` - Notes for porting to modern languages
 
 ## Known Issues
 
