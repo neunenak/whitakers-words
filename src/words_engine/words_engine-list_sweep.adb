@@ -529,7 +529,7 @@ is
          for J in reverse 1 .. Pa_Last loop --  Sweep backwards over PA
 
             if ((Pa (J).D_K in Addons .. Yyy) or (Pa (J).IR.Qual.Pofs in Xons))
-              and then (Pw_On)
+              and then Pw_On
             then               --  first FIX/TRICK after regular
                Fix_On := True;
                Pw_On  := False;
@@ -553,12 +553,12 @@ is
 
             elsif ((Pa (J).D_K in Addons .. Yyy) or
               (Pa (J).IR.Qual.Pofs in Xons))  and then
-              (Fix_On)
+              Fix_On
             then               --  another FIX
                null;
             elsif ((Pa (J).D_K in Addons .. Yyy)  or
               (Pa (J).IR.Qual.Pofs = X))  and then  --  Kills TRICKS stuff
-              (not Pw_On)
+              not Pw_On
             then
                Pa (P_Last - Diff_J + 1 .. Pa_Last - Diff_J) :=
                  Pa (P_Last + 1 .. Pa_Last);
