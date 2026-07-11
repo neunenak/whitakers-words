@@ -20,21 +20,23 @@ Notes and considerations for porting Whitaker's WORDS to a modern language.
 
 ## Recommended Architecture for Port
 
+See `docs/rust-port-plan.md` for the current, concrete plan. The summary below is kept for historical context; the JSON/SQLite data-migration idea it describes was superseded — `DICTLINE.GEN` etc. stay as the source of truth and are parsed as text directly (see "Data Files Stay Text, Stay Source of Truth" in the port plan).
+
 ### Layer 1: Data Layer
 ```
 Dictionary
 ├── Entry: stems[], part_of_speech, grammar, meaning
-├── Load from JSON/SQLite
+├── Parsed directly from DICTLINE.GEN text (no derived format)
 └── Index by stem prefix for fast lookup
 
 Inflections
 ├── Rule: ending, grammatical_properties, stem_key
-├── Organized by ending for fast matching
-└── Load from JSON/YAML
+├── Parsed directly from INFLECTS.LAT text (no derived format)
+└── Organized by ending for fast matching
 
 Addons
 ├── Prefixes, Suffixes, Tackons
-└── Word formation rules
+└── Word formation rules, parsed directly from ADDONS.LAT
 ```
 
 ### Layer 2: Parsing Engine
@@ -72,45 +74,7 @@ CLI, Web API, Library bindings
 
 ## Data Format Migration
 
-### Dictionary (DICTLINE.GEN → JSON)
-
-**Before (fixed-width):**
-```
-abac               abac                N      2 1 M T   E E X C E small table...
-```
-
-**After (JSON):**
-```json
-{
-  "lemma": "abacus",
-  "stems": ["abac", "abac", null, null],
-  "pos": "noun",
-  "declension": 2,
-  "gender": "masculine",
-  "meaning": "small table for cruets",
-  "age": "late",
-  "frequency": "rare"
-}
-```
-
-### Inflections (INFLECTS.LAT → JSON)
-
-**Before:**
-```
-N     1 1 NOM S C  1 1 a         X A
-```
-
-**After:**
-```json
-{
-  "pos": "noun",
-  "declension": 1,
-  "case": "nominative",
-  "number": "singular",
-  "ending": "a",
-  "stem_key": 1
-}
-```
+**Superseded** — there is no migration. `DICTLINE.GEN` and `INFLECTS.LAT` are hand-maintained via the `HOWTO.txt` workflow (SORTER, CHECK, DUPS, LINEDICT); a Rust port parses their fixed-width text directly rather than converting them to JSON, so the checked-in files remain the single source of truth. See `docs/rust-port-plan.md`.
 
 ## Key Algorithms to Port
 
@@ -169,10 +133,10 @@ def validates(entry: DictEntry, infl: Inflection) -> bool:
 
 ## Recommended Approach
 
-1. **Start with data migration**
-   - Convert DICTLINE.GEN to JSON
-   - Convert INFLECTS.LAT to JSON
-   - Write validation scripts
+1. **Start with the data layer**
+   - Write a fixed-width parser for DICTLINE.GEN (no format conversion)
+   - Write a fixed-width parser for INFLECTS.LAT (no format conversion)
+   - Validate parsed counts/spot-checks against the known entry counts
 
 2. **Build core parser**
    - Implement decomposition

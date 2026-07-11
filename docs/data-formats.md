@@ -163,9 +163,10 @@ At startup, `Initialize_Word_Package` loads:
 
 ## Porting Considerations
 
-**For a modern port, consider:**
+See `docs/rust-port-plan.md` for the concrete plan. Key points:
 
-1. **JSON/SQLite for dictionary**: Replace fixed-width text + binary with structured format
-2. **Embedded data**: Bundle dictionary as binary resource or fetch from network
-3. **Simplified inflections**: The 5-section organization was for disk efficiency; in-memory can be simpler
-4. **Unicode support**: Original uses ASCII only; modern port should handle macrons (ā, ē, ī, ō, ū)
+1. **Keep DICTLINE.GEN/INFLECTS.LAT/ADDONS.LAT/UNIQUES.LAT as the source of truth**: they're hand-maintained via the `HOWTO.txt` workflow (SORTER, CHECK, DUPS, ...). A port should parse this fixed-width text directly rather than converting it to JSON/SQLite — a derived copy would drift from the file the maintenance tooling actually edits.
+2. **No binary cache needed**: `DICTFILE.GEN`/`STEMFILE.GEN`/`INDXFILE.GEN`/`INFLECTS.SEC`/`EWDSFILE.GEN` exist because Ada's direct-access I/O needed a fixed record layout on disk. A modern port can just parse the text sources into in-memory indices (`HashMap`s etc.) at startup — cheap enough to not need caching.
+3. **Embedded data**: bundle the text files as a compile-time resource (e.g. Rust's `include_str!`) for single-binary distribution.
+4. **Simplified inflections**: The 5-section organization was for disk efficiency; in-memory can be simpler (e.g. one `HashMap` keyed by ending).
+5. **Unicode support**: Original uses ASCII only; modern port should handle macrons (ā, ē, ī, ō, ū)
